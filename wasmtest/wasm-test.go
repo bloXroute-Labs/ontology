@@ -31,8 +31,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/go-interpreter/wagon/exec"
-	"github.com/go-interpreter/wagon/wasm"
 	"github.com/ontio/ontology-crypto/keypair"
 	"github.com/ontio/ontology/account"
 	"github.com/ontio/ontology/cmd/utils"
@@ -52,6 +50,8 @@ import (
 	"github.com/ontio/ontology/smartcontract/states"
 	vmtypes "github.com/ontio/ontology/vm/neovm/types"
 	common3 "github.com/ontio/ontology/wasmtest/common"
+	"github.com/ontio/wagon/exec"
+	"github.com/ontio/wagon/wasm"
 )
 
 const contractDir = "testwasmdata"
@@ -142,7 +142,7 @@ func ExactTestCase(code []byte) [][]common3.TestCase {
 	vm.RecoverPanic = true
 	envGasLimit := uint64(100000000000000)
 	envExecStep := uint64(100000000000000)
-	vm.AvaliableGas = &exec.Gas{GasLimit: &envGasLimit, GasPrice: 0, GasFactor: 5, ExecStep: &envExecStep}
+	vm.ExecMetrics = &exec.Gas{GasLimit: &envGasLimit, GasPrice: 0, GasFactor: 5, ExecStep: &envExecStep}
 	vm.CallStackDepth = 1024
 
 	entry := compiled.RawModule.Export.Entries["invoke"]

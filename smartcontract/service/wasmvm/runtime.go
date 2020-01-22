@@ -23,8 +23,6 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/go-interpreter/wagon/exec"
-	"github.com/go-interpreter/wagon/wasm"
 	"github.com/ontio/ontology/common"
 	"github.com/ontio/ontology/common/log"
 	"github.com/ontio/ontology/core/payload"
@@ -37,6 +35,8 @@ import (
 	"github.com/ontio/ontology/smartcontract/states"
 	"github.com/ontio/ontology/vm/crossvm_codec"
 	neotypes "github.com/ontio/ontology/vm/neovm/types"
+	"github.com/ontio/wagon/exec"
+	"github.com/ontio/wagon/wasm"
 	"io"
 )
 
@@ -56,9 +56,9 @@ type Runtime struct {
 	CallOutPut []byte
 }
 
-func TimeStamp(proc *exec.Process) uint64 {
+func Timestamp(proc *exec.Process) uint64 {
 	self := proc.HostData().(*Runtime)
-	self.checkGas(TIME_STAMP_GAS)
+	self.checkGas(TIMESTAMP_GAS)
 	return uint64(self.Service.Time)
 }
 
@@ -440,7 +440,7 @@ func NewHostModule() *wasm.Module {
 	m.FunctionIndexSpace = []wasm.Function{
 		{ //0
 			Sig:  &m.Types.Entries[0],
-			Host: reflect.ValueOf(TimeStamp),
+			Host: reflect.ValueOf(Timestamp),
 			Body: &wasm.FunctionBody{}, // create a dummy wasm body (the actual value will be taken from Host.)
 		},
 		{ //1
@@ -709,7 +709,7 @@ func (self *Runtime) getContractType(addr common.Address) (ContractType, error) 
 }
 
 func (self *Runtime) checkGas(gaslimit uint64) {
-	gas := self.Service.vm.AvaliableGas
+	gas := self.Service.vm.ExecMetrics
 	if *gas.GasLimit >= gaslimit {
 		*gas.GasLimit -= gaslimit
 	} else {
