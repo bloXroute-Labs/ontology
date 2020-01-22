@@ -1,8 +1,11 @@
 
 FROM tianon/ubuntu-core:14.04
+
 ENV ONTOLOGY_PATH /var/ontology
+
 RUN mkdir -p $ONTOLOGY_PATH
-COPY ontology $ONTOLOGY_PATH
+COPY ontology-linux-amd64 $ONTOLOGY_PATH/ontology
+
 EXPOSE 20334 20335 20336 20337 20338 20339
 WORKDIR $ONTOLOGY_PATH
 ENTRYPOINT ["./ontology"]
